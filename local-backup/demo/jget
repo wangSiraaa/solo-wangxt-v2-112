@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# jget <field> — read one top-level or dotted JSON field from stdin without jq.
+# Usage: echo "$json" | jget snapshot_id
+exec python3 -c '
+import json, sys
+field = sys.argv[1]
+data = json.load(sys.stdin)
+for part in field.split("."):
+    data = data[part] if isinstance(data, dict) else data[int(part)]
+print(json.dumps(data, ensure_ascii=False) if isinstance(data, (dict, list)) else data)
+' "$1"
